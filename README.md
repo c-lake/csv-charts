@@ -2,7 +2,7 @@
 A small project to practice Vue.js.
 Client-side page that generates Chart.js charts from a csv file.
 
-Demo page: https://c-lake.github.io/csv/
+Demo page: https://c-lake.github.io/csv-charts/
 
 #### TODO
 - [ ] Select multiple series
