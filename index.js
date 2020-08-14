@@ -11,11 +11,6 @@ var app = new Vue({
     }
   },
   methods: {
-    submit(file) {
-      console.log('diu lei on99');
-      const inputCsv = file;
-      console.log(inputCsv);
-    },
     load() {
       this.completed = false;
       this.raw = {};
