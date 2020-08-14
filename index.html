@@ -17,11 +17,12 @@
     <div id="app" class="ml-2 mt-2 mr-2">
         <div>
             <h4>CSV Charts</h4>
-            Client-side page that generates <a href="https://www.chartjs.org/" target="_blank">Chart.js</a> charts from a csv file.
+            Client-side page that generates <a href="https://www.chartjs.org/" target="_blank">Chart.js</a> charts from a csv file.<br>
+            Get a sample CSV <a href="./sample.csv">here</a>.
             <hr>
         </div>
         <div class="form-group">
-            <label for="myfile">Select a file:</label>
+            <label for="myfile">Select a CSV file:</label>
             <input type="file" id="myfile" name="myfile" accept="text/csv">
             <button @click="load()" class="btn btn-success">Load</button>
         </div>
@@ -52,8 +53,6 @@
                         <option selected>Choose a series</option>
                         <option v-for="head in header">{{ head }}</option>
                     </select>
-                    Chosen series: {{ selected }}
-
                     <canvas id="csv-chart"></canvas>
                 </div>
             </div>
