@@ -8,5 +8,6 @@ Demo page: https://c-lake.github.io/csv-charts/
 - [ ] Select multiple series
 - [ ] More chart types: scatter...
 - [ ] Exportable charts to embed in HTML
+- [ ] Limit size of CSV preview
 
 Automatic chart coloring from: https://nagix.github.io/chartjs-plugin-colorschemes/

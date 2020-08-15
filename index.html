@@ -27,7 +27,7 @@
         <div v-if="completed">
             <div class="row">
                 <div class="col">
-                    <button @click="transpose()" class="btn btn-primary">Transpose</button>
+                    <div class="option-title">Data Preview</div>
                     <table class="table">
                         <tr v-for="row in raw">
                             <td v-for="element in row">{{ element }}</td>
@@ -36,25 +36,57 @@
                 </div>
                 
                 <div class="col">
-                    Choose a chart type:
-                    <select class="custom-select" v-model="chartType" @change="render()">
-                        <option selected>Bar</option>
-                        <option>Line</option>
-                        <option>Doughnut</option>
-                        <option>Pie</option>
-                    </select>
+                    <div class="form-group">
+                        <div class="option-title">Chart Type</div>
+                        <label for="chartType">Select a chart type:</label>
+                        <select class="custom-select" v-model="chartType" @change="updateChartType()" id="chartType">
+                            <option v-for="chartType in chartDefinition">{{ chartType.title }}</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="option-title">Data Options</div>
+                        Swap horizontal and vertical axis:
+                        <button @click="transpose()" class="btn btn-primary" id="Transpose">Transpose</button><br>
+                        
+                        <label for="chartType">Choose series:</label>
+                        <select class="custom-select" v-model="selected" @change="render()" id="Series">
+                            <option selected>Choose a series</option>
+                            <option v-for="head in header">{{ head }}</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="option-title">Chart Options</div>
+                        
+                        <div v-if="activeChartDefinition.hasYAxis">
+                            <input type="checkbox" id="beginAtZero" v-model="chartOption_beginAtZero" @change="render()">
+                            <label for="beginAtZero">y-axis should begin at zero</label>
+                        </div>
 
-                    Choose a series:
-                    <select class="custom-select" v-model="selected" @change="render()">
-                        <option selected>Choose a series</option>
-                        <option v-for="head in header">{{ head }}</option>
-                    </select>
+                        <div v-if="activeChartDefinition.curve">                            
+                            <input type="checkbox" id="curve" v-model="chartOption_curve" @change="render()">
+                            <label for="curve">smooth lines</label>
+                        </div>
+
+                    </div>
+                    
+                    <div class="option-title">Chart Preview</div>
+                    Export feature is yet to be done. For now, right-click on the canvas and click save image.
                     <canvas id="csv-chart"></canvas>
                 </div>
             </div>
         </div>
+        
         <span v-else>Choose a CSV file</span>
+        
     </div>
     
     <script src="./index.js"></script>
 </body>
+
+<style>
+    .option-title {
+        font-weight: bold;
+    }
+</style>
