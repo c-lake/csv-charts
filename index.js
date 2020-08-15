@@ -54,7 +54,8 @@ var app = new Vue({
         complete: (results) => {
           console.log("Finished:", results.data);
           this.raw = results.data;
-          this.header = this.raw[0]; // problem: duplicated / null headers
+          this.header = Array.from(this.raw[0]); // problem: duplicated / null headers
+          this.header.shift();
           this.completed = true;
           console.log(this.completed);
         }
@@ -116,7 +117,7 @@ var app = new Vue({
       console.log(`Horizontal axis: ${xaxis}`);
       
       let series = [];
-      let seriesIndex = this.header.indexOf(this.selected);
+      let seriesIndex = this.header.indexOf(this.selected) + 1;
       for (row of this.raw) {
         series.push(row[seriesIndex]);
       }
@@ -131,7 +132,8 @@ var app = new Vue({
      */
     transpose() {
       this.raw = this.raw[0].map((x,i) => this.raw.map(x => x[i]));
-      this.header = this.raw[0]; // problem: duplicated / null headers
+      this.header = Array.from(this.raw[0]); // problem: duplicated / null headers
+      this.header.shift();
     },
 
     /**
