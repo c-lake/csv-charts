@@ -3,7 +3,7 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script src="js/chartjs-plugin-colorschemes.min.js"></script>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.2.0/papaparse.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-select@latest"></script>
@@ -52,7 +52,7 @@
                     <div class="form-group">
                         <div class="option-title">Data Options</div>
                         Swap horizontal and vertical axis:
-                        <button @click="transpose()" class="btn btn-primary" id="Transpose">Transpose</button><br>
+                        <button @click="transpose()" class="btn btn-primary btn-sm" id="Transpose">Transpose</button><br>
                         
                         <label for="chartType">Choose series:</label>
                         
@@ -61,7 +61,15 @@
                             <option v-for="head in header">{{ head }}</option>
                         </select>
                         
-                        <v-select multiple v-else v-model="selected" :options="header" @input="render()" />
+                        <div v-else class="row">
+                            <div class="col-lg-8">
+                                <v-select multiple v-model="selected" :options="header" @input="render()" />
+                            </div>
+                            <div class="col">
+                                <button @click="selected = Array.from(header); render()" class="btn btn-primary btn-sm">Select all</button>
+                                <button @click="selected = []" class="btn btn-primary btn-sm">Clear selection</button>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -75,6 +83,16 @@
                         <div v-if="activeChartDefinition.curve">                            
                             <input type="checkbox" id="curve" v-model="chartOption_curve" @change="render()">
                             <label for="curve">smooth lines</label>
+                        </div>
+                        
+                        <div v-if="activeChartDefinition.fill">                            
+                            <input type="checkbox" id="fill" v-model="chartOption_fill" @change="render()">
+                            <label for="fill">fill area under curve</label>
+                        </div>
+                        
+                        <div v-if="activeChartDefinition.stackable">                            
+                            <input type="checkbox" id="stack" v-model="chartOption_stack" @change="render()">
+                            <label for="stack">stack series</label>
                         </div>
                     </div>
                     

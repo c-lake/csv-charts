@@ -4,13 +4,15 @@ const ChartDefinition = [
   {
     title: "Bar",
     multiSeries: true,
-    hasYAxis: true
+    hasYAxis: true,
+    stackable: true,
   },
   {
     title: "Line",
     multiSeries: true,
     hasYAxis: true,
-    curve: true
+    curve: true,
+    fill: true
   },
   {
     title: "Doughnut"
@@ -28,7 +30,7 @@ var app = new Vue({
       raw: [], // Raw csv data parsed by papaparse
       header: [], // First row of the raw csv data as series name
       
-      selected: "", // Selected data series
+      selected: [], // Selected data series
       chartType: "Bar", // Selected chart type
       
       chart: {}, // Active chart object (kept for destruction after updating chart types or options)
@@ -38,8 +40,10 @@ var app = new Vue({
       activeChartDefinition: {}, // Valid chart options available for the selected chart type. Updated by updateChartType()
 
       // Variables storing chart options
-      chartOption_beginAtZero: true,
-      chartOption_curve: true
+      chartOption_beginAtZero: true, // valid for chart with hasYAxis. Specifies whether y-axis of chart must include 0
+      chartOption_curve: true, // valid for chart with curve. Specifies whether or not to smooth the curve
+      chartOption_fill: false, // valid for chart with fill. Specifies whether area under curve should be filled
+      chartOption_stack: false // valid for chart with stackable. Specifies whether series should be stacked
     }
   },
   methods: {
@@ -76,6 +80,7 @@ var app = new Vue({
         datasets.push({
           label: series.seriesName,
           lineTension: (!this.chartOption_curve) ? 0 : 0.4,
+          fill: this.chartOption_fill,
           data: series.data
         })
       });
@@ -93,9 +98,13 @@ var app = new Vue({
           datasets: datasets
         },
         
-        options: {
+        options: { // Should check whether options are valid before using
           scales: (this.activeChartDefinition.hasYAxis) ? {
+            xAxes: [{
+              stacked: this.activeChartDefinition.stackable && this.chartOption_stack
+            }],
             yAxes: [{
+              stacked: this.activeChartDefinition.stackable && this.chartOption_stack,
               ticks: {
                 beginAtZero: this.chartOption_beginAtZero
               }
@@ -153,6 +162,7 @@ var app = new Vue({
       this.raw = this.raw[0].map((x,i) => this.raw.map(x => x[i]));
       this.header = Array.from(this.raw[0]); // problem: duplicated / null headers
       this.header.shift();
+      this.selected = [];
     },
 
     /**
