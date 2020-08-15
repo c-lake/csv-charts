@@ -1,3 +1,5 @@
+Vue.component('v-select', VueSelect.VueSelect);
+
 const ChartDefinition = [
   {
     title: "Bar",
@@ -68,6 +70,15 @@ var app = new Vue({
     render() {
       console.log("Trying to render!");
       let transformed = this.transform();
+
+      let datasets = [];
+      transformed.series.map( (series) => {
+        datasets.push({
+          label: series.seriesName,
+          lineTension: (!this.chartOption_curve) ? 0 : 0.4,
+          data: series.data
+        })
+      });
       
       // Graph!!
       let ctx = document.getElementById('csv-chart').getContext('2d');
@@ -79,11 +90,7 @@ var app = new Vue({
         
         data: {
           labels: transformed.xaxis,
-          datasets: [{
-            label: this.selected,
-            lineTension: (!this.chartOption_curve) ? 0 : 0.4,
-            data: transformed.series
-          }]
+          datasets: datasets
         },
         
         options: {
@@ -117,12 +124,24 @@ var app = new Vue({
       console.log(`Horizontal axis: ${xaxis}`);
       
       let series = [];
-      let seriesIndex = this.header.indexOf(this.selected) + 1;
-      for (row of this.raw) {
-        series.push(row[seriesIndex]);
-      }
-      series.shift();
-      console.log(`Data series: ${series}`);
+      /* series is an array storing the data series to be rendered.
+       * Each element of an array is an object: { seriesName: "SERIES NAME", data: [ numbers of the series ] }
+       */
+      let seriesIndex = [];
+      if (Array.isArray(this.selected))
+        this.selected.map( (seriesName) => seriesIndex.push(this.header.indexOf(seriesName) + 1));
+        // +1? this.header has the first element stripped. As we will use this index to retrieve the data in this.raw, we need to add back 1.
+      else
+        seriesIndex.push(this.header.indexOf(this.selected) + 1);
+
+      seriesIndex.map ( (seriesI) => {
+        series.push({ seriesName: this.header[seriesI - 1], data: [] }); // -1 to retrieve series name from this.header
+        for (row of this.raw) 
+          series[series.length - 1].data.push(row[seriesI]);
+        series[series.length - 1].data.shift();
+      } );
+
+      console.log(series);
       
       return { xaxis, series };
     },
