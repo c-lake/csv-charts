@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- Chart.js scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script src="js/chartjs-plugin-colorschemes.min.js"></script>
     
+    <!-- Papaparse & Vue scripts -->
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.2.0/papaparse.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-select@latest"></script>
     <link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css">
     
+    <!-- Bootstrap scripts -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
@@ -51,10 +54,8 @@
                     
                     <div class="form-group">
                         <div class="option-title">Data Options</div>
-                        Swap horizontal and vertical axis:
-                        <button @click="transpose()" class="btn btn-primary btn-sm" id="Transpose">Transpose</button><br>
                         
-                        <label for="chartType">Choose series:</label>
+                        <label for="chartType">Choose data series:</label>
                         
                         <select class="custom-select" v-if="!activeChartDefinition.multiSeries" v-model="selected" @change="render()" id="Series">
                             <option selected>Choose a series</option>
@@ -70,6 +71,11 @@
                                 <button @click="selected = []" class="btn btn-primary btn-sm">Clear selection</button>
                             </div>
                         </div>
+                        
+                        <div><br>
+                            Switch row / column:
+                            <button @click="transpose()" class="btn btn-primary btn-sm" id="Transpose">Transpose</button>
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -77,22 +83,22 @@
                         
                         <div v-if="activeChartDefinition.hasYAxis">
                             <input type="checkbox" id="beginAtZero" v-model="chartOption_beginAtZero" @change="render()">
-                            <label for="beginAtZero">y-axis should begin at zero</label>
+                            <label for="beginAtZero">Vertical axis should begin at zero</label>
                         </div>
                         
                         <div v-if="activeChartDefinition.curve">                            
                             <input type="checkbox" id="curve" v-model="chartOption_curve" @change="render()">
-                            <label for="curve">smooth lines</label>
+                            <label for="curve">Smooth lines</label>
                         </div>
                         
                         <div v-if="activeChartDefinition.fill">                            
                             <input type="checkbox" id="fill" v-model="chartOption_fill" @change="render()">
-                            <label for="fill">fill area under curve</label>
+                            <label for="fill">Fill area under curve</label>
                         </div>
                         
                         <div v-if="activeChartDefinition.stackable">                            
                             <input type="checkbox" id="stack" v-model="chartOption_stack" @change="render()">
-                            <label for="stack">stack series</label>
+                            <label for="stack">Stack series</label>
                         </div>
                     </div>
                     
