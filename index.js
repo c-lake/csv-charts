@@ -258,3 +258,34 @@ function saveImage() {
   let image = canvas.toDataURL(`image/png`).replace(`image/png`, "image/octet-stream");
   window.location.href = image;
 }
+
+function saveJpeg(){
+  // Blatantly copied from https://stackoverflow.com/a/44174406. Written by Laereom
+  let context = document.getElementById('csv-chart').getContext('2d');
+  canvas = context.canvas;
+  //cache height and width        
+  let w = canvas.width;
+  let h = canvas.height;
+  let data;
+  //get the current ImageData for the canvas.
+  data = context.getImageData(0, 0, w, h);
+  //store the current globalCompositeOperation
+  let compositeOperation = context.globalCompositeOperation;
+  //set to draw behind current content
+  context.globalCompositeOperation = "destination-over";
+  //set background color
+  context.fillStyle = "#ffffff";
+  //draw background / rect on entire canvas
+  context.fillRect(0,0,w,h);
+  //get the image data from the canvas
+  let imageData = this.canvas.toDataURL("image/jpeg");
+  //clear the canvas
+  context.clearRect (0,0,w,h);
+  //restore it with original / cached ImageData
+  context.putImageData(data, 0,0);
+  //reset the globalCompositeOperation to what it was
+  context.globalCompositeOperation = compositeOperation;
+  //return the Base64 encoded data url string
+  let image = imageData.replace(`image/jpeg`, "image/octet-stream");
+  window.location.href = image;
+  }

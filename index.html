@@ -124,6 +124,7 @@
                         <button v-if="largeFileMode" @click="render(true)" class="btn btn-success btn-sm">Update Chart</button>
                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exportModal" @click="render(true, true)">Export as HTML</button>
                         <a onclick="saveImage()" class="btn btn-primary btn-sm">Export as PNG</a>
+                        <a onclick="saveJpeg()" class="btn btn-primary btn-sm">Export as JPEG</a>
                         <canvas id="csv-chart"></canvas>
                     </div>
 
