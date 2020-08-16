@@ -19,6 +19,17 @@ const ChartDefinition = [
   },
   {
     title: "Pie"
+  },
+  {
+    title: "Radar",
+    multiSeries: true,
+    fill: true
+  },
+  {
+    title: "Scatter",
+    multiSeries: true,
+    hasYAxis: true,
+    scatterTransform: true
   }
 ]
 
@@ -34,11 +45,11 @@ var app = new Vue({
       chartType: "Bar", // Selected chart type
       
       chart: {}, // Active chart object (kept for destruction after updating chart types or options)
-
+      
       // Valid chart options objects
       chartDefinition: ChartDefinition, // Valid chart options for each chart type
       activeChartDefinition: {}, // Valid chart options available for the selected chart type. Updated by updateChartType()
-
+      
       // Variables storing chart options
       chartOption_beginAtZero: true, // valid for chart with hasYAxis. Specifies whether y-axis of chart must include 0
       chartOption_curve: true, // valid for chart with curve. Specifies whether or not to smooth the curve
@@ -48,8 +59,8 @@ var app = new Vue({
   },
   methods: {
     /**
-     * Loads and parses csv file.
-     */
+    * Loads and parses csv file.
+    */
     load() {
       this.completed = false;
       this.raw = {};
@@ -67,19 +78,19 @@ var app = new Vue({
         }
       });
     },
-
+    
     /**
-     * Renders chart.
-     */
+    * Renders chart.
+    */
     render() {
       console.log("Trying to render!");
       let transformed = this.transform();
-
+      
       let datasets = [];
       transformed.series.map( (series) => {
         datasets.push({
           label: series.seriesName,
-          lineTension: (!this.chartOption_curve) ? 0 : 0.4,
+          lineTension: (this.activeChartDefinition.curve && this.chartOption_curve) ? 0.4 : 0,
           fill: this.chartOption_fill,
           data: series.data
         })
@@ -89,7 +100,7 @@ var app = new Vue({
       let ctx = document.getElementById('csv-chart').getContext('2d');
       
       if (this.chart instanceof Chart) this.chart.destroy();
-
+      
       this.chart = new Chart(ctx, {
         type: this.chartType.toLowerCase(),
         
@@ -119,10 +130,10 @@ var app = new Vue({
       });
       
     },
-
+    
     /**
-     * Prepares selected data series for render.
-     */
+    * Prepares selected data series for render.
+    */
     transform() {
       let xaxis = [];
       const xaxisIndex = 0;
@@ -134,51 +145,64 @@ var app = new Vue({
       
       let series = [];
       /* series is an array storing the data series to be rendered.
-       * Each element of an array is an object: { seriesName: "SERIES NAME", data: [ numbers of the series ] }
-       */
+      * Each element of an array is an object: { seriesName: "SERIES NAME", data: [ numbers of the series ] }
+      */
       let seriesIndex = [];
+      
+      // Find indices from series name, store them into seriesIndex[]
       if (Array.isArray(this.selected))
-        this.selected.map( (seriesName) => seriesIndex.push(this.header.indexOf(seriesName) + 1));
-        // +1? this.header has the first element stripped. As we will use this index to retrieve the data in this.raw, we need to add back 1.
+      this.selected.map( (seriesName) => seriesIndex.push(this.header.indexOf(seriesName) + 1));
+      // +1? this.header has the first element stripped. As we will use this index to retrieve the data in this.raw, we need to add back 1.
       else
-        seriesIndex.push(this.header.indexOf(this.selected) + 1);
-
+      seriesIndex.push(this.header.indexOf(this.selected) + 1);
+      
+      // Extract data from raw, store them into series[]
       seriesIndex.map ( (seriesI) => {
         series.push({ seriesName: this.header[seriesI - 1], data: [] }); // -1 to retrieve series name from this.header
-        for (row of this.raw) 
-          series[series.length - 1].data.push(row[seriesI]);
+        if (!this.activeChartDefinition.scatterTransform) {
+          // Extract data for general charts
+          this.raw.map( (row) => {
+            series[series.length - 1].data.push(row[seriesI]);
+          })
+        }
+        else {
+          // Extract data for scatter charts
+          this.raw.map( (row, i) => {
+            series[series.length - 1].data.push({ x: xaxis[i - 1], y: row[seriesI] })
+          })
+        }
         series[series.length - 1].data.shift();
       } );
-
+      
       console.log(series);
       
       return { xaxis, series };
     },
-
+    
     /**
-     * Transposes csv table.
-     */
+    * Transposes csv table.
+    */
     transpose() {
       this.raw = this.raw[0].map((x,i) => this.raw.map(x => x[i]));
       this.header = Array.from(this.raw[0]); // problem: duplicated / null headers
       this.header.shift();
       this.selected = [];
     },
-
+    
     /**
-     * Updates the chart options available for the specified chart type.
-     * 
-     * @param {initialized} doRender Whether or not chart should be rendered after updating chart options.
-     * Should be true when chart options are updated by user so that changes can be previewed immediately.
-     * Should be false during initialization of page when data series are not yet ready.
-     */
+    * Updates the chart options available for the specified chart type.
+    * 
+    * @param {initialized} doRender Whether or not chart should be rendered after updating chart options.
+    * Should be true when chart options are updated by user so that changes can be previewed immediately.
+    * Should be false during initialization of page when data series are not yet ready.
+    */
     updateChartType(doRender = true) {
       chartType = this.chartType;
       this.activeChartDefinition = this.chartDefinition.find( chart => chart.title === chartType);
       console.log(this.activeChartDefinition.title);
-
+      
       if (doRender)
-        this.render();
+      this.render();
     }
     
   },
