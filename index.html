@@ -93,6 +93,12 @@
                     <div class="form-group">
                         <div class="option-title">Chart Options</div>
                         
+                        <div>
+                            <input type="checkbox" id="chartTitle" v-model="chartOption_chartTitle" @change="render()">
+                            <label for="chartTitle">Display chart title: </label>
+                            <input type="text" v-model="chartOption_chartTitleText" @blur="render()" />
+                        </div>
+
                         <div v-if="activeChartDefinition.hasYAxis">
                             <input type="checkbox" id="beginAtZero" v-model="chartOption_beginAtZero" @change="render()">
                             <label for="beginAtZero">Vertical axis should begin at zero</label>
@@ -116,22 +122,62 @@
                     
                     <div class="option-title">Chart Preview
                         <button v-if="largeFileMode" @click="render(true)" class="btn btn-success btn-sm">Update Chart</button>
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exportModal" @click="render(true, true)">Export as HTML</button>
+                        <canvas id="csv-chart"></canvas>
                     </div>
-                    Export feature is yet to be done. For now, right-click on the canvas and click save image.
-                    <canvas id="csv-chart"></canvas>
+
+                    <div class="modal fade" id="exportModal">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Export as HTML</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <div>
+                                        Paste this at the end of the head element, right before <code>&lt;/head&gt;</code>:<br>
+                                        <pre class="px-3 py-2"><code>&lt;script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"&gt;&lt;/script&gt;
+&lt;script src="js/chartjs-plugin-colorschemes.min.js"&gt;&lt;/script&gt;</code></pre>You only need to do this once for each webpage.
+                                    </div>
+                                    <br>
+                                    <div>
+                                        Paste this at the location where you want to insert the chart in the body element:
+                                        <pre class="px-3 py-2"><code>&lt;canvas id="csv-chart-<span class="emphasize-code">{{ chartId }}</span>"&gt;&lt;/canvas&gt;
+&lt;script&gt;
+  // Generated with csv-charts at https://c-lake.github.io/csv-charts
+  let ctx<span class="emphasize-code">{{ chartId }}</span> = document.getElementById('csv-chart-<span class="emphasize-code">{{ chartId }}</span>').getContext('2d');
+  let csvChart<span class="emphasize-code">{{ chartId }}</span> = new Chart(ctx<span class="emphasize-code">{{ chartId }}</span>, {{ html }});
+&lt;/script&gt;</code></pre>
+                                    </div>
+                                </div>
+                            
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                  </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         
         <span v-else>Choose a CSV file</span>
-        
     </div>
-    
     <script src="./index.js"></script>
 </body>
 
 <style>
     .option-title {
+        font-weight: bold;
+    }
+    pre {
+        background-color: #f0f0f0;
+        color: #ff569c;
+        margin-bottom: 0;
+    }
+    .emphasize-code {
+        color: #ffae00;
         font-weight: bold;
     }
 </style>

@@ -2,31 +2,31 @@ Vue.component('v-select', VueSelect.VueSelect);
 
 const ChartDefinition = [
   {
-    title: "Bar",
+    title: 'Bar',
     multiSeries: true,
     hasYAxis: true,
     stackable: true,
   },
   {
-    title: "Line",
+    title: 'Line',
     multiSeries: true,
     hasYAxis: true,
     curve: true,
     fill: true
   },
   {
-    title: "Doughnut"
+    title: 'Doughnut'
   },
   {
-    title: "Pie"
+    title: 'Pie'
   },
   {
-    title: "Radar",
+    title: 'Radar',
     multiSeries: true,
     fill: true
   },
   {
-    title: "Scatter",
+    title: 'Scatter',
     multiSeries: true,
     hasYAxis: true,
     scatterTransform: true
@@ -39,13 +39,15 @@ var app = new Vue({
     return {
       completed: false, // Whether csv file is selected
       largeFileMode: false, // Large file mode limits the CSV preview size and stop automatic rendering after changing any options
+      html: '', // For storing chart configurations when exporting as html
+      chartId: 0, // For storing a random number when exporting as html
 
       raw: [], // Raw csv data parsed by papaparse
       header: [], // First row of the raw csv data as series name
       preview: [], // First 8 cols and 16 rows of the CSV data for preview under large file mode
       
       selected: [], // Selected data series
-      chartType: "Bar", // Selected chart type
+      chartType: 'Bar', // Selected chart type
       
       chart: {}, // Active chart object (kept for destruction after updating chart types or options)
       
@@ -57,7 +59,9 @@ var app = new Vue({
       chartOption_beginAtZero: true, // valid for chart with hasYAxis. Specifies whether y-axis of chart must include 0
       chartOption_curve: true, // valid for chart with curve. Specifies whether or not to smooth the curve
       chartOption_fill: false, // valid for chart with fill. Specifies whether area under curve should be filled
-      chartOption_stack: false // valid for chart with stackable. Specifies whether series should be stacked
+      chartOption_stack: false, // valid for chart with stackable. Specifies whether series should be stacked
+      chartOption_chartTitle: false, // valid for all chart types. Specifies whether chart title should be displayed
+      chartOption_chartTitleText: '' // valid for all chart types. Specifies the chart title text
     }
   },
   methods: {
@@ -78,7 +82,7 @@ var app = new Vue({
       Papa.parse(selectedFile, {
         skipEmptyLines: true,
         complete: (results) => {
-          console.log("Finished:", results.data);
+          console.log('Finished:', results.data);
           this.raw = results.data;
           this.header = Array.from(this.raw[0]); // problem: duplicated / null headers
           this.header.shift();
@@ -94,11 +98,12 @@ var app = new Vue({
      * 
      * @param {Boolean} force Whether or not to run a manual render in large file mode. Defaults to false.
      * This option has no effect if large file mode is not activated.
+     * @param {Boolean} refreshHtml Whether or not to refresh the exportable HTML. Defaults to false.
      */
-    render(force = false) {
+    render(force = false, refreshHtml = false) {
       if (this.largeFileMode && !force) return;
 
-      console.log("Trying to render!");
+      console.log('Trying to render!');
       let transformed = this.transform();
       
       let datasets = [];
@@ -110,39 +115,50 @@ var app = new Vue({
           data: series.data
         })
       });
-      
+
       // Graph!!
       let ctx = document.getElementById('csv-chart').getContext('2d');
       
       if (this.chart instanceof Chart) this.chart.destroy();
       
-      this.chart = new Chart(ctx, {
-        type: this.chartType.toLowerCase(),
-        
-        data: {
-          labels: transformed.xaxis,
-          datasets: datasets
+      let chartConfig = {
+      type: this.chartType.toLowerCase(),
+      
+      data: {
+        labels: transformed.xaxis,
+        datasets: datasets
+      },
+      
+      options: { // Should check whether options are valid before using
+        title: {
+          display: this.chartOption_chartTitle,
+          fontSize: 16,
+          text: this.chartOption_chartTitleText
         },
-        
-        options: { // Should check whether options are valid before using
-          scales: (this.activeChartDefinition.hasYAxis) ? {
-            xAxes: [{
-              stacked: this.activeChartDefinition.stackable && this.chartOption_stack
-            }],
-            yAxes: [{
-              stacked: this.activeChartDefinition.stackable && this.chartOption_stack,
-              ticks: {
-                beginAtZero: this.chartOption_beginAtZero
-              }
-            }]
-          } : null,
-          plugins: {
-            colorschemes: {
-              scheme: 'tableau.Classic20'
+        scales: (this.activeChartDefinition.hasYAxis) ? {
+          xAxes: [{
+            stacked: this.activeChartDefinition.stackable && this.chartOption_stack
+          }],
+          yAxes: [{
+            stacked: this.activeChartDefinition.stackable && this.chartOption_stack,
+            ticks: {
+              beginAtZero: this.chartOption_beginAtZero
             }
+          }]
+        } : null,
+        plugins: {
+          colorschemes: {
+            scheme: 'tableau.Classic20'
           }
         }
-      });
+      }
+    }
+
+    if (refreshHtml) {
+      this.chartId = Math.floor(Math.random() * 10000);
+      this.html = JSON.stringify(chartConfig);
+    }
+    this.chart = new Chart(ctx, chartConfig);
       
     },
     
@@ -160,7 +176,7 @@ var app = new Vue({
       
       let series = [];
       /* series is an array storing the data series to be rendered.
-       * Each element of an array is an object: { seriesName: "SERIES NAME", data: [ numbers of the series ] }
+       * Each element of an array is an object: { seriesName: 'SERIES NAME', data: [ numbers of the series ] }
        */
       let seriesIndex = [];
       
