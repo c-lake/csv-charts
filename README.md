@@ -7,7 +7,7 @@ Demo page: https://c-lake.github.io/csv-charts/
 #### TODO
 - [x] Select multiple series
 - [x] More chart types: scatter...
-- [ ] Limit size of CSV preview
+- [x] Large file mode: Limit size of CSV preview for significantly faster large file loads
 - [ ] Exportable charts to embed in HTML
 - [ ] Simple aggregate functions for data series
 - [ ] Complete interface remake
