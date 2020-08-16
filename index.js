@@ -38,8 +38,11 @@ var app = new Vue({
   data() {
     return {
       completed: false, // Whether csv file is selected
+      largeFileMode: false, // Large file mode limits the CSV preview size and stop automatic rendering after changing any options
+
       raw: [], // Raw csv data parsed by papaparse
       header: [], // First row of the raw csv data as series name
+      preview: [], // First 8 cols and 16 rows of the CSV data for preview under large file mode
       
       selected: [], // Selected data series
       chartType: "Bar", // Selected chart type
@@ -63,6 +66,8 @@ var app = new Vue({
      */
     load() {
       this.completed = false;
+
+      // Resets variables on load
       this.raw = [];
       this.header = [];
       this.selected = [];
@@ -71,11 +76,13 @@ var app = new Vue({
       const selectedFile = document.getElementById('myfile').files[0];
       console.log(selectedFile.name);
       Papa.parse(selectedFile, {
+        skipEmptyLines: true,
         complete: (results) => {
           console.log("Finished:", results.data);
           this.raw = results.data;
           this.header = Array.from(this.raw[0]); // problem: duplicated / null headers
           this.header.shift();
+          this.refreshPreview();
           this.completed = true;
           console.log(this.completed);
         }
@@ -84,8 +91,13 @@ var app = new Vue({
     
     /**
      * Renders chart.
+     * 
+     * @param {Boolean} force Whether or not to run a manual render in large file mode. Defaults to false.
+     * This option has no effect if large file mode is not activated.
      */
-    render() {
+    render(force = false) {
+      if (this.largeFileMode && !force) return;
+
       console.log("Trying to render!");
       let transformed = this.transform();
       
@@ -190,12 +202,13 @@ var app = new Vue({
       this.header = Array.from(this.raw[0]); // problem: duplicated / null headers
       this.header.shift();
       this.selected = [];
+      this.refreshPreview();
     },
     
     /**
      * Updates the chart options available for the specified chart type.
      * 
-     * @param {initialized} doRender Whether or not chart should be rendered after updating chart options.
+     * @param {Boolean} doRender Whether or not chart should be rendered after updating chart options.
      * Should be true when chart options are updated by user so that changes can be previewed immediately.
      * Should be false during initialization of page when data series are not yet ready.
      */
@@ -206,6 +219,15 @@ var app = new Vue({
       
       if (doRender)
         this.render();
+    },
+    
+    /**
+     * Extracts the first 8 cols and 16 rows of the raw csv data for preview under large file mode.
+     * Should be called after data has changed
+     */
+    refreshPreview() {
+      this.preview = this.raw.slice(0, 16).map(row => row.slice(0, 8));
+      console.log(this.preview);
     }
     
   },

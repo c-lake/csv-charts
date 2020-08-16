@@ -6,10 +6,11 @@ Demo page: https://c-lake.github.io/csv-charts/
 
 #### TODO
 - [x] Select multiple series
-- [ ] More chart types: scatter...
+- [x] More chart types: scatter...
 - [ ] Limit size of CSV preview
 - [ ] Exportable charts to embed in HTML
 - [ ] Simple aggregate functions for data series
 - [ ] Complete interface remake
+- [ ] Filter data range??
 
 Automatic chart coloring from: https://nagix.github.io/chartjs-plugin-colorschemes/

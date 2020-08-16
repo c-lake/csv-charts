@@ -28,7 +28,11 @@
         <div class="form-group">
             <label for="myfile">Select a CSV file:</label>
             <input type="file" id="myfile" name="myfile" accept="text/csv">
-            <button @click="load()" class="btn btn-success">Load</button>
+            <button @click="load()" class="btn btn-success btn-sm">Load</button>
+
+            <br>
+            <input type="checkbox" id="largeFileMode" v-model="largeFileMode" @change="render()" />
+            <label for="largeFileMode">Large File Mode: Limits size of CSV preview and stops automatic chart update</label>
         </div>
         
         <br>
@@ -36,7 +40,15 @@
             <div class="row">
                 <div class="col-5 overflow-auto">
                     <div class="option-title">Data Preview</div>
-                    <table class="table">
+                    <!-- Large file mode -->
+                    <table v-if="largeFileMode" class="table">
+                        <tr v-for="row in preview">
+                            <td v-for="element in row">{{ element }}</td>
+                        </tr>
+                    </table>
+
+                    <!-- Usual mode, show whole csv -->
+                    <table v-else class="table">
                         <tr v-for="row in raw">
                             <td v-for="element in row">{{ element }}</td>
                         </tr>
@@ -102,7 +114,9 @@
                         </div>
                     </div>
                     
-                    <div class="option-title">Chart Preview</div>
+                    <div class="option-title">Chart Preview
+                        <button v-if="largeFileMode" @click="render(true)" class="btn btn-success btn-sm">Update Chart</button>
+                    </div>
                     Export feature is yet to be done. For now, right-click on the canvas and click save image.
                     <canvas id="csv-chart"></canvas>
                 </div>
