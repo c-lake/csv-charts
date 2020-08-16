@@ -101,6 +101,7 @@ var app = new Vue({
      * @param {Boolean} refreshHtml Whether or not to refresh the exportable HTML. Defaults to false.
      */
     render(force = false, refreshHtml = false) {
+      if (!this.completed) return; // Do nothing if file not loaded
       if (this.largeFileMode && !force) return;
 
       console.log('Trying to render!');
@@ -245,9 +246,15 @@ var app = new Vue({
       this.preview = this.raw.slice(0, 16).map(row => row.slice(0, 8));
       console.log(this.preview);
     }
-    
+
   },
   mounted() {
     this.updateChartType(false);
   }
 })
+
+function saveImage() {
+  let canvas = document.getElementById("csv-chart");
+  let image = canvas.toDataURL(`image/png`).replace(`image/png`, "image/octet-stream");
+  window.location.href = image;
+}
