@@ -9,7 +9,7 @@ Demo page: https://c-lake.github.io/csv-charts/
 - [x] More chart types: scatter...
 - [x] Large file mode: Limit size of CSV preview for significantly faster large file loads
 - [x] Exportable charts to embed in HTML
-- [x] Filter data range
+- [x] Limit data range
 - [ ] Complete interface remake
 
 Automatic chart coloring from: https://nagix.github.io/chartjs-plugin-colorschemes/
