@@ -45,6 +45,7 @@ var app = new Vue({
       raw: [], // Raw csv data parsed by papaparse
       header: [], // First row of the raw csv data as series name
       preview: [], // First 8 cols and 16 rows of the CSV data for preview under large file mode
+      fileReadRange: '', // Limit range to read from A1:???
       
       selected: [], // Selected data series
       chartType: 'Bar', // Selected chart type
@@ -76,14 +77,21 @@ var app = new Vue({
       this.header = [];
       this.selected = [];
       if (this.chart instanceof Chart) this.chart.destroy();
+
+      let readRange = {};
+      if (this.fileReadRange != null) readRange = this.getNumColsFromA1(this.fileReadRange);
+      console.log(`Will read ${ readRange.numCols > 0 ? 'first ' + readRange.numCols : 'all'} columns and ${ readRange.numRows > 0 ? 'first ' + readRange.numRows : 'all'} rows.`);
+      this.fileReadRange = readRange.col + (readRange.numRows > 0 ? readRange.numRows : '');
       
       const selectedFile = document.getElementById('myfile').files[0];
       console.log(selectedFile.name);
       Papa.parse(selectedFile, {
         skipEmptyLines: true,
+        preview: readRange.numRows > 0 ? readRange.numRows : 0,
         complete: (results) => {
           console.log('Finished:', results.data);
           this.raw = results.data;
+          this.limitColumns(readRange.numCols > 0 ? readRange.numCols : 0);
           this.header = Array.from(this.raw[0]); // problem: duplicated / null headers
           this.header.shift();
           this.refreshPreview();
@@ -245,6 +253,42 @@ var app = new Vue({
     refreshPreview() {
       this.preview = this.raw.slice(0, 16).map(row => row.slice(0, 8));
       console.log(this.preview);
+    },
+
+    /**
+     * Removes excess columns from the raw csv data.
+     * Note: Unlike the more efficient row limit provided by PapaParse which does not load excess rows, we need to load all columns before removal.
+     * 
+     * @param {Number} numCols First numCols columns will be kept.
+     */
+    limitColumns(numCols) {
+      if (numCols <= 0) return;
+      this.raw = this.raw.map(row => row.slice(0, numCols));
+    },
+
+    /**
+     * Returns the number of rows and columns from A1 to the target address.
+     * 
+     * @param {String} cellAddress Target address for calculation
+     */
+    getNumColsFromA1(cellAddress) {
+      let col = "";
+      for (const c of cellAddress) {
+        if (c.toUpperCase().charCodeAt(0) >= 65 && c.toUpperCase().charCodeAt(0) <= 90)
+          col += c.toUpperCase();
+        else
+          break;
+      }
+      let numCols = 0;
+      for (let i = 0, j = col.length - 1; i < col.length; i++, j--) {
+        numCols += (col.charCodeAt(j) - 64) * (26 ** i);
+      }
+      numRows = parseInt(cellAddress.replace(/\D/g,''));
+      return {
+        col, // The parsed column in alphabets for display
+        numCols: numCols > 0 ? numCols : 0,
+        numRows: numRows > 0 ? numRows : 0
+      }
     }
 
   },

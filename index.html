@@ -33,6 +33,10 @@
             <br>
             <input type="checkbox" id="largeFileMode" v-model="largeFileMode" @change="render()" />
             <label for="largeFileMode">Large File Mode: Limits size of CSV preview and stops automatic chart update</label>
+
+            <br>
+            <label for="fileReadRange">Limit range to read - Examples: Empty (no limit), D100, AA (limit columns only), 1000 (limit rows only): A1:</label>
+            <input type="text" id="fileReadRange" v-model="fileReadRange" />
         </div>
         
         <br>
@@ -123,8 +127,8 @@
                     <div class="option-title">Chart Preview
                         <button v-if="largeFileMode" @click="render(true)" class="btn btn-success btn-sm">Update Chart</button>
                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exportModal" @click="render(true, true)">Export as HTML</button>
-                        <a onclick="saveImage()" class="btn btn-primary btn-sm">Export as PNG</a>
-                        <a onclick="saveJpeg()" class="btn btn-primary btn-sm">Export as JPEG</a>
+                        <a onclick="saveImage()" class="btn btn-primary btn-sm">Export as PNG (Transparent Background)</a>
+                        <a onclick="saveJpeg()" class="btn btn-primary btn-sm">Export as JPEG (White Background)</a>
                         <canvas id="csv-chart"></canvas>
                     </div>
 
