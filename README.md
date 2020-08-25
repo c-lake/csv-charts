@@ -8,7 +8,7 @@ Demo page: https://c-lake.github.io/csv-charts/
 
 #### Note
 
-- This tool is completely client-side and data files are only processed in your computer.
+- This tool is completely client-side and data files are only processed on your computer.
 
 - In the HTML export prompt,
 

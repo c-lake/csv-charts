@@ -64,7 +64,11 @@ var app = new Vue({
       chartOption_fill: false, // valid for chart with fill. Specifies whether area under curve should be filled
       chartOption_stack: false, // valid for chart with stackable. Specifies whether series should be stacked
       chartOption_chartTitle: false, // valid for all chart types. Specifies whether chart title should be displayed
-      chartOption_chartTitleText: '' // valid for all chart types. Specifies the chart title text
+      chartOption_chartTitleText: '', // valid for all chart types. Specifies the chart title text
+      chartOption_yAxisLabel: false, // valid for chart with hasYAxis. Specifies whether y-axis label should be displayed
+      chartOption_yAxisLabelText: '', // valid for chart with hasYAxis. Specifies the y-axis label text
+      chartOption_xAxisLabel: false, // valid for chart with hasYAxis. Specifies whether x-axis label should be displayed
+      chartOption_xAxisLabelText: '', // valid for chart with hasYAxis. Specifies the x-axis label text
     }
   },
   methods: {
@@ -152,9 +156,17 @@ var app = new Vue({
         },
         scales: (this.activeChartDefinition.hasYAxis) ? {
           xAxes: [{
+            scaleLabel: {
+              display: this.chartOption_xAxisLabel,
+              labelString: this.chartOption_xAxisLabelText
+            },
             stacked: this.activeChartDefinition.stackable && this.chartOption_stack
           }],
           yAxes: [{
+            scaleLabel: {
+              display: this.chartOption_yAxisLabel,
+              labelString: this.chartOption_yAxisLabelText
+            },
             stacked: this.activeChartDefinition.stackable && this.chartOption_stack,
             ticks: {
               beginAtZero: this.chartOption_beginAtZero

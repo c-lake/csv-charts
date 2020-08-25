@@ -62,7 +62,7 @@
                                     
                                     <br>
                                     <label for="fileReadRange">Limit range to read
-                                        <span data-toggle="tooltip" data-placement="top" data-html="true" title="Examples: Empty (no limit)<br>D100 (A1:D100)<br>AA (Load 27 columns only)<br>100 (Load 100 rows only)">
+                                        <span data-toggle="tooltip" data-placement="top" data-html="true" title="Examples: Empty (no limit, read whole file)<br>D100 (A1:D100)<br>AA (Load 27 columns only)<br>100 (Load 100 rows only)">
                                             <i class="fa fa-question-circle" aria-hidden="true"></i>
                                         </span>
                                     </label><br>
@@ -144,6 +144,18 @@
                                 <div v-if="activeChartDefinition.stackable">                            
                                     <input type="checkbox" id="stack" v-model="chartOption_stack" @change="render()">
                                     <label for="stack">Stack series</label>
+                                </div>
+
+                                <div>
+                                    <input type="checkbox" id="yAxisLabel" v-model="chartOption_yAxisLabel" @change="render()">
+                                    <label for="yAxisLabel">Display vertical axis label: </label>
+                                    <input type="text" v-model="chartOption_yAxisLabelText" @blur="render()" />
+                                </div>
+
+                                <div>
+                                    <input type="checkbox" id="xAxisLabel" v-model="chartOption_xAxisLabel" @change="render()">
+                                    <label for="xAxisLabel">Display horizontal axis label: </label>
+                                    <input type="text" v-model="chartOption_xAxisLabelText" @blur="render()" />
                                 </div>
                             </div>
                         </div>
