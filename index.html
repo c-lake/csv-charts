@@ -1,189 +1,233 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>CSV Charts</title>
+
     <!-- Chart.js scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script src="js/chartjs-plugin-colorschemes.min.js"></script>
-    
+
     <!-- Papaparse & Vue scripts -->
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.2.0/papaparse.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-select@latest"></script>
     <link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css">
-    
+
+
     <!-- Bootstrap scripts -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
+
 <body>
-    <div id="app" class="ml-2 mt-2 mr-2">
-        <div>
-            <h4>CSV Charts</h4>
-            Client-side page that generates <a href="https://www.chartjs.org/" target="_blank">Chart.js</a> charts from a csv file.<br>
-            Get a sample CSV <a href="./sample.csv">here</a> or <a href="./scatter.csv">here for scatter diagram</a>.
-            <hr>
-        </div>
-        <div class="form-group">
-            <label for="myfile">Select a CSV file:</label>
-            <input type="file" id="myfile" name="myfile" accept="text/csv">
-            <button @click="load()" class="btn btn-success btn-sm">Load</button>
-
-            <br>
-            <input type="checkbox" id="largeFileMode" v-model="largeFileMode" @change="render()" />
-            <label for="largeFileMode">Large File Mode: Limits size of CSV preview and stops automatic chart update</label>
-
-            <br>
-            <label for="fileReadRange">Limit range to read - Examples: Empty (no limit), D100, AA (limit columns only), 1000 (limit rows only): A1:</label>
-            <input type="text" id="fileReadRange" v-model="fileReadRange" />
-        </div>
-        
-        <br>
-        <div v-if="completed">
-            <div class="row">
-                <div class="col-5 overflow-auto">
-                    <div class="option-title">Data Preview</div>
-                    <!-- Large file mode -->
-                    <table v-if="largeFileMode" class="table">
-                        <tr v-for="row in preview">
-                            <td v-for="element in row">{{ element }}</td>
-                        </tr>
-                    </table>
-
-                    <!-- Usual mode, show whole csv -->
-                    <table v-else class="table">
-                        <tr v-for="row in raw">
-                            <td v-for="element in row">{{ element }}</td>
-                        </tr>
-                    </table>
+    <div class="container-fluid app" id="app">
+        <div class="row fixed-top">
+            <div class="col-md-12 csv-header">
+                <div class="navbar navbar-dark bg-dark csv-nav">
+                    <div class="container-fluid"><a class="navbar-brand" href="#">CSV Charts</a><span class="csv-filename"><i class="fa fa-file-text file-icon"></i>
+                        <span v-if="completed">{{ fileName }}</span>
+                        <span v-else>Choose a CSV file</span>
+                    </span></div>
                 </div>
-                
-                <div class="col-7">
-                    <div class="form-group">
-                        <div class="option-title">Chart Type</div>
-                        <label for="chartType">Select a chart type:</label>
-                        <select class="custom-select" v-model="chartType" @change="updateChartType()" id="chartType">
-                            <option v-for="chartType in chartDefinition">{{ chartType.title }}</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <div class="option-title">Data Options</div>
-                        
-                        <label for="chartType">Choose data series:</label>
-                        
-                        <select class="custom-select" v-if="!activeChartDefinition.multiSeries" v-model="selected" @change="render()" id="Series">
-                            <option selected>Choose a series</option>
-                            <option v-for="head in header">{{ head }}</option>
-                        </select>
-                        
-                        <div v-else class="row">
-                            <div class="col-lg-8">
-                                <v-select multiple v-model="selected" :options="header" @input="render()" />
-                            </div>
-                            <div class="col">
-                                <button @click="selected = Array.from(header); render()" class="btn btn-primary btn-sm">Select all</button>
-                                <button @click="selected = []" class="btn btn-primary btn-sm">Clear selection</button>
-                            </div>
+            </div>
+        </div>
+        <div class="row csv-row">
+            <div class="col-md-4 csv-controls">
+                <div role="tablist" id="accordion-1">
+                    <div class="card control">
+                        <div class="card-header clickable" role="tab" data-toggle="collapse" data-target="#accordion-1 .item-1">
+                            <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="accordion-1 .item-1" href="#accordion-1 .item-1"><span class="mr-2">1</span>Load File</a></h5>
                         </div>
-                        
-                        <div><br>
-                            Switch row / column:
-                            <button @click="transpose()" class="btn btn-primary btn-sm" id="Transpose">Transpose</button>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <div class="option-title">Chart Options</div>
-                        
-                        <div>
-                            <input type="checkbox" id="chartTitle" v-model="chartOption_chartTitle" @change="render()">
-                            <label for="chartTitle">Display chart title: </label>
-                            <input type="text" v-model="chartOption_chartTitleText" @blur="render()" />
-                        </div>
+                        <div class="collapse show item-1" role="tabpanel" data-parent="#accordion-1">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="myfile">Select a CSV file:</label><br>
+                                    <input type="file" id="myfile" name="myfile" class="file-select" accept="text/csv">
+                                    <button @click="load()" class="btn btn-success btn-sm">Load</button>
+                                    <br><br>
+                                    Get a sample CSV <a href="./sample.csv">here</a> or <a href="./scatter.csv">here for scatter diagram</a>
+                                    <hr>
 
-                        <div v-if="activeChartDefinition.hasYAxis">
-                            <input type="checkbox" id="beginAtZero" v-model="chartOption_beginAtZero" @change="render()">
-                            <label for="beginAtZero">Vertical axis should begin at zero</label>
-                        </div>
-                        
-                        <div v-if="activeChartDefinition.curve">                            
-                            <input type="checkbox" id="curve" v-model="chartOption_curve" @change="render()">
-                            <label for="curve">Smooth lines</label>
-                        </div>
-                        
-                        <div v-if="activeChartDefinition.fill">                            
-                            <input type="checkbox" id="fill" v-model="chartOption_fill" @change="render()">
-                            <label for="fill">Fill area under curve</label>
-                        </div>
-                        
-                        <div v-if="activeChartDefinition.stackable">                            
-                            <input type="checkbox" id="stack" v-model="chartOption_stack" @change="render()">
-                            <label for="stack">Stack series</label>
-                        </div>
-                    </div>
-                    
-                    <div class="option-title">Chart Preview
-                        <button v-if="largeFileMode" @click="render(true)" class="btn btn-success btn-sm">Update Chart</button>
-                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exportModal" @click="render(true, true)">Export as HTML</button>
-                        <a onclick="saveImage()" class="btn btn-primary btn-sm">Export as PNG (Transparent Background)</a>
-                        <a onclick="saveJpeg()" class="btn btn-primary btn-sm">Export as JPEG (White Background)</a>
-                        <canvas id="csv-chart"></canvas>
-                    </div>
-
-                    <div class="modal fade" id="exportModal">
-                        <div class="modal-dialog modal-xl">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Export as HTML</h4>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-
-                                <div class="modal-body">
-                                    <div>
-                                        Paste this at the end of the head element, right before <code>&lt;/head&gt;</code>:<br>
-                                        <pre class="px-3 py-2"><code>&lt;script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"&gt;&lt;/script&gt;
-&lt;script src="js/chartjs-plugin-colorschemes.min.js"&gt;&lt;/script&gt;</code></pre>You only need to do this once for each webpage even if you have multiple charts.
-                                    </div>
+                                    <div class="remind-text mb-1">File Options</div>
+                                    <label for="largeFileMode">Large File Mode </label>
+                                    <span data-toggle="tooltip" data-placement="top" data-html="true" title="Limits size of CSV preview<br>Stops automatic chart update">
+                                        <i class="fa fa-question-circle" aria-hidden="true"></i>&nbsp;
+                                    </span>
+                                    <input type="checkbox" id="largeFileMode" v-model="largeFileMode" @change="render()" />
+                                    
                                     <br>
-                                    <div>
-                                        Paste this at the location where you want to insert the chart in the body element:
-                                        <pre class="px-3 py-2"><code>&lt;canvas id="csv-chart-<span class="emphasize-code">{{ chartId }}</span>"&gt;&lt;/canvas&gt;
-&lt;script&gt;
-  // Generated with csv-charts at https://c-lake.github.io/csv-charts
-  let ctx<span class="emphasize-code">{{ chartId }}</span> = document.getElementById('csv-chart-<span class="emphasize-code">{{ chartId }}</span>').getContext('2d');
-  let csvChart<span class="emphasize-code">{{ chartId }}</span> = new Chart(ctx<span class="emphasize-code">{{ chartId }}</span>, {{ html }});
-&lt;/script&gt;</code></pre>
+                                    <label for="fileReadRange">Limit range to read
+                                        <span data-toggle="tooltip" data-placement="top" data-html="true" title="Examples: Empty (no limit)<br>D100 (A1:D100)<br>AA (Load 27 columns only)<br>100 (Load 100 rows only)">
+                                            <i class="fa fa-question-circle" aria-hidden="true"></i>
+                                        </span>
+                                    </label><br>
+                                    A1:<input type="text" id="fileReadRange" v-model="fileReadRange" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card control">
+                        <div class="card-header clickable collapsed" role="tab" data-toggle="collapse" data-target="#accordion-1 .item-2">
+                            <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-2" href="#accordion-1 .item-2"><span class="mr-2">2</span>Chart Type</a></h5>
+                        </div>
+                        <div class="collapse item-2" role="tabpanel" data-parent="#accordion-1">
+                            <div class="card-body form-group">
+                                <label for="chartType">Select a chart type:</label>
+                                <select class="custom-select" v-model="chartType" @change="updateChartType()" id="chartType">
+                                    <option v-for="chartType in chartDefinition">{{ chartType.title }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card control">
+                        <div class="card-header clickable collapsed" role="tab" data-toggle="collapse" data-target="#accordion-1 .item-3">
+                            <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-3" href="#accordion-1 .item-3"><span class="mr-2">3</span>Data Options</a></h5>
+                        </div>
+                        <div class="collapse item-3" role="tabpanel" data-parent="#accordion-1">
+                            <div class="card-body form-group">
+                                <label for="chartType">Choose data series:</label>
+                                
+                                <select class="custom-select" v-if="!activeChartDefinition.multiSeries" v-model="selected" @change="render()" id="Series">
+                                    <option selected>Choose a series</option>
+                                    <option v-for="head in header">{{ head }}</option>
+                                </select>
+                                
+                                <div v-else class="row">
+                                    <div class="col-md-12">
+                                        <v-select multiple v-model="selected" :options="header" @input="render()" />
+                                    </div>
+                                    <div class="col mt-2">
+                                        <button @click="selected = Array.from(header); render()" class="btn btn-primary btn-sm">Select all</button>
+                                        <button @click="selected = []" class="btn btn-primary btn-sm">Clear selection</button>
                                     </div>
                                 </div>
-                            
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                                  </div>
+                                
+                                <div><br>
+                                    Switch row / column:
+                                    <button @click="transpose()" class="btn btn-primary btn-sm" id="Transpose">Transpose</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card control">
+                        <div class="card-header clickable collapsed" role="tab" data-toggle="collapse" data-target="#accordion-1 .item-4">
+                            <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-4" href="#accordion-1 .item-4"><span class="mr-2">4</span>Chart Options</a></h5>
+                        </div>
+                        <div class="collapse item-4" role="tabpanel" data-parent="#accordion-1">
+                            <div class="card-body">
+                                <div>
+                                    <input type="checkbox" id="chartTitle" v-model="chartOption_chartTitle" @change="render()">
+                                    <label for="chartTitle">Display chart title: </label>
+                                    <input type="text" v-model="chartOption_chartTitleText" @blur="render()" />
+                                </div>
+        
+                                <div v-if="activeChartDefinition.hasYAxis">
+                                    <input type="checkbox" id="beginAtZero" v-model="chartOption_beginAtZero" @change="render()">
+                                    <label for="beginAtZero">Vertical axis should begin at zero</label>
+                                </div>
+                                
+                                <div v-if="activeChartDefinition.curve">                            
+                                    <input type="checkbox" id="curve" v-model="chartOption_curve" @change="render()">
+                                    <label for="curve">Smooth lines</label>
+                                </div>
+                                
+                                <div v-if="activeChartDefinition.fill">                            
+                                    <input type="checkbox" id="fill" v-model="chartOption_fill" @change="render()">
+                                    <label for="fill">Fill area under curve</label>
+                                </div>
+                                
+                                <div v-if="activeChartDefinition.stackable">                            
+                                    <input type="checkbox" id="stack" v-model="chartOption_stack" @change="render()">
+                                    <label for="stack">Stack series</label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="col-md-8 csv-preview">
+                <div class="card preview-area">
+                    <div class="card-body">
+                        <h4 class="card-title">Chart Preview</h4>
+                        <div v-if="rendered">
+                            <button v-if="largeFileMode" @click="render(true)" class="btn btn-success btn-sm">Update Chart</button>
+                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exportModal" @click="render(true, true)">Export as HTML</button>
+                            <a onclick="saveImage()" class="btn btn-primary btn-sm">Export as PNG (Transparent Background)</a>
+                            <a onclick="saveJpeg()" class="btn btn-primary btn-sm">Export as JPEG (White Background)</a>
+                        </div>
+                        <div v-else class="remind-text">
+                            Choose a csv file and select data series.
+                        </div>
+                        <canvas id="csv-chart"></canvas>
+                    </div>
+                </div>
+                <div class="card preview-area">
+                    <div class="card-body">
+                        <h4 class="card-title">Data Preview</h4>
+                        <div v-if="completed">
+                            <!-- Large file mode -->
+                            <table v-if="largeFileMode" class="table">
+                                <tr v-for="row in preview">
+                                    <td v-for="element in row">{{ element }}</td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Usual mode, show whole csv -->
+                            <table v-else class="table">
+                                <tr v-for="row in raw">
+                                    <td v-for="element in row">{{ element }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div v-else class="remind-text remind-text-data">Choose a CSV file.</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <span v-else>Choose a CSV file</span>
+
+        <div class="modal fade" id="exportModal">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Export as HTML</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+    
+                    <div class="modal-body">
+                        <div>
+                            Paste this at the end of the head element, right before <code>&lt;/head&gt;</code>:<br>
+                            <pre class="px-3 py-2"><code>&lt;script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"&gt;&lt;/script&gt;
+&lt;script src="js/chartjs-plugin-colorschemes.min.js"&gt;&lt;/script&gt;</code></pre>You only need to do this once for each webpage even if you have multiple charts.
+                        </div>
+                        <br>
+                        <div>
+                            Paste this at the location where you want to insert the chart in the body element:
+                            <pre class="px-3 py-2"><code>&lt;canvas id="csv-chart-<span class="emphasize-code">{{ chartId }}</span>"&gt;&lt;/canvas&gt;
+&lt;script&gt;
+// Generated with csv-charts at https://c-lake.github.io/csv-charts
+let ctx<span class="emphasize-code">{{ chartId }}</span> = document.getElementById('csv-chart-<span class="emphasize-code">{{ chartId }}</span>').getContext('2d');
+let csvChart<span class="emphasize-code">{{ chartId }}</span> = new Chart(ctx<span class="emphasize-code">{{ chartId }}</span>, {{ html }});
+&lt;/script&gt;</code></pre>
+                        </div>
+                    </div>
+                
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                      </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+
     <script src="./index.js"></script>
 </body>
 
-<style>
-    .option-title {
-        font-weight: bold;
-    }
-    pre {
-        background-color: #f0f0f0;
-        color: #ff569c;
-        margin-bottom: 0;
-    }
-    .emphasize-code {
-        color: #ffae00;
-        font-weight: bold;
-    }
-</style>
+</html>

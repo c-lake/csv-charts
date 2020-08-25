@@ -1,0 +1,141 @@
+.csv-filename {
+  color: #fff;
+  flex-grow: 1;
+}
+
+.preview-area {
+  margin-top: 15px;
+  border: 1px solid #f9f9f9;
+  -webkit-box-shadow: 1px 1px 9px 0px rgba(192,192,192,1);
+  -moz-box-shadow: 1px 1px 9px 0px rgba(192,192,192,1);
+  box-shadow: 1px 1px 9px 0px rgba(192,192,192,1);
+  margin-left: 15px;
+}
+
+@media (min-width: 768px) {
+  .preview-area {
+    margin-top: 15px;
+    border: 1px solid #f9f9f9;
+    -webkit-box-shadow: 1px 1px 9px 0px rgba(192,192,192,1);
+    -moz-box-shadow: 1px 1px 9px 0px rgba(192,192,192,1);
+    box-shadow: 1px 1px 9px 0px rgba(192,192,192,1);
+    margin-left: 0px;
+  }
+}
+
+.csv-controls {
+  background-color: #333d46;
+  padding-right: 0px;
+}
+
+@media (min-width: 768px) {
+  .csv-controls {
+    max-height: 100%;
+    overflow: auto;
+  }
+}
+
+.card.control {
+  border: 0px;
+  border-radius: 0px;
+}
+
+.app {
+  height: 100vh;
+  padding-left: 0;
+}
+
+@media (min-width: 768px) {
+  .app {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: hidden;
+  }
+}
+
+.row.csv-row {
+  height: 100%;
+  margin-top: 3.5rem;
+}
+
+@media (min-width: 768px) {
+  .row.csv-row {
+    flex-grow: 1;
+    overflow: hidden;
+  }
+}
+
+.col-md-12.master-container {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.csv-preview {
+  background-color: #f0ebe6;
+  padding-bottom: 15px;
+}
+
+@media (min-width: 768px) {
+  .csv-preview {
+    max-height: 100%;
+    overflow: auto;
+  }
+}
+
+.card-header.clickable {
+  cursor: pointer;
+  border-radius: 0;
+  background-color: #333d46;
+}
+
+.csv-header {
+  padding-right: 0;
+}
+
+.fa.file-icon {
+  margin-right: 10px;
+  margin-left: 20px;
+}
+
+.card-header.clickable:hover {
+  background-color: #2b333a !important;
+}
+
+.card-header.clickable a {
+  color: #fff;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.card-header.clickable:not(.collapsed) {
+  background-color: #242b31;
+}
+
+.csv-nav {
+  background-color: #1c4d80 !important;
+}
+
+pre {
+  background-color: #f0f0f0;
+  color: #ff569c;
+  margin-bottom: 0;
+}
+
+.emphasize-code {
+  color: #ffae00;
+  font-weight: bold;
+}
+
+.file-select {
+  width: 300px;
+}
+
+.remind-text {
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
+.remind-text-data {
+  padding-bottom: 150px;
+}

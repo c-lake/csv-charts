@@ -41,6 +41,8 @@ var app = new Vue({
       largeFileMode: false, // Large file mode limits the CSV preview size and stop automatic rendering after changing any options
       html: '', // For storing chart configurations when exporting as html
       chartId: 0, // For storing a random number when exporting as html
+      fileName: '', // For storing to file name to be displayed in heading
+      rendered: false, // Whether chart has been rendered
 
       raw: [], // Raw csv data parsed by papaparse
       header: [], // First row of the raw csv data as series name
@@ -71,6 +73,7 @@ var app = new Vue({
      */
     load() {
       this.completed = false;
+      this.rendered = false;
 
       // Resets variables on load
       this.raw = [];
@@ -85,6 +88,7 @@ var app = new Vue({
       
       const selectedFile = document.getElementById('myfile').files[0];
       console.log(selectedFile.name);
+      this.fileName = selectedFile.name;
       Papa.parse(selectedFile, {
         skipEmptyLines: true,
         preview: readRange.numRows > 0 ? readRange.numRows : 0,
@@ -124,6 +128,8 @@ var app = new Vue({
           data: series.data
         })
       });
+
+      this.rendered = true;
 
       // Graph!!
       let ctx = document.getElementById('csv-chart').getContext('2d');
@@ -223,6 +229,7 @@ var app = new Vue({
      * Transposes csv table.
      */
     transpose() {
+      if (!this.completed) return;
       this.raw = this.raw[0].map((x,i) => this.raw.map(x => x[i]));
       this.header = Array.from(this.raw[0]); // problem: duplicated / null headers
       this.header.shift();
@@ -332,4 +339,8 @@ function saveJpeg(){
   //return the Base64 encoded data url string
   let image = imageData.replace(`image/jpeg`, "image/octet-stream");
   window.location.href = image;
-  }
+}
+
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
