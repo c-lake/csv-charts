@@ -14,11 +14,6 @@
 
 @media (min-width: 768px) {
   .preview-area {
-    margin-top: 15px;
-    border: 1px solid #f9f9f9;
-    -webkit-box-shadow: 1px 1px 9px 0px rgba(192,192,192,1);
-    -moz-box-shadow: 1px 1px 9px 0px rgba(192,192,192,1);
-    box-shadow: 1px 1px 9px 0px rgba(192,192,192,1);
     margin-left: 0px;
   }
 }

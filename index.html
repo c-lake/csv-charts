@@ -156,9 +156,9 @@
                         <h4 class="card-title">Chart Preview</h4>
                         <div v-if="rendered">
                             <button v-if="largeFileMode" @click="render(true)" class="btn btn-success btn-sm">Update Chart</button>
-                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exportModal" @click="render(true, true)">Export as HTML</button>
-                            <a onclick="saveImage()" class="btn btn-primary btn-sm">Export as PNG (Transparent Background)</a>
-                            <a onclick="saveJpeg()" class="btn btn-primary btn-sm">Export as JPEG (White Background)</a>
+                            <button type="button" class="btn btn-primary btn-sm mb-1" data-toggle="modal" data-target="#exportModal" @click="render(true, true)">Export HTML</button>
+                            <a onclick="saveImage()" class="btn btn-primary btn-sm mb-1">Export PNG (Transparent)</a>
+                            <a onclick="saveJpeg()" class="btn btn-primary btn-sm mb-1">Export JPEG (White Background)</a>
                         </div>
                         <div v-else class="remind-text">
                             Choose a csv file and select data series.
@@ -169,7 +169,7 @@
                 <div class="card preview-area">
                     <div class="card-body">
                         <h4 class="card-title">Data Preview</h4>
-                        <div v-if="completed">
+                        <div v-if="completed" class="overflow-auto">
                             <!-- Large file mode -->
                             <table v-if="largeFileMode" class="table">
                                 <tr v-for="row in preview">
