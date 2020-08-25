@@ -50,7 +50,7 @@
                                     <input type="file" id="myfile" name="myfile" class="file-select" accept="text/csv">
                                     <button @click="load()" class="btn btn-success btn-sm">Load</button>
                                     <br><br>
-                                    Get a sample CSV <a href="./sample.csv">here</a> or <a href="./scatter.csv">here for scatter diagram</a>
+                                    Get a sample CSV <a href="examples/sample.csv">here</a> or <a href="examples/scatter.csv">here for scatter diagram</a>
                                     <hr>
 
                                     <div class="remind-text mb-1">File Options</div>
@@ -209,9 +209,9 @@
                             Paste this at the location where you want to insert the chart in the body element:
                             <pre class="px-3 py-2"><code>&lt;canvas id="csv-chart-<span class="emphasize-code">{{ chartId }}</span>"&gt;&lt;/canvas&gt;
 &lt;script&gt;
-// Generated with csv-charts at https://c-lake.github.io/csv-charts
-let ctx<span class="emphasize-code">{{ chartId }}</span> = document.getElementById('csv-chart-<span class="emphasize-code">{{ chartId }}</span>').getContext('2d');
-let csvChart<span class="emphasize-code">{{ chartId }}</span> = new Chart(ctx<span class="emphasize-code">{{ chartId }}</span>, {{ html }});
+    // Generated with csv-charts at https://c-lake.github.io/csv-charts
+    let ctx<span class="emphasize-code">{{ chartId }}</span> = document.getElementById('csv-chart-<span class="emphasize-code">{{ chartId }}</span>').getContext('2d');
+    let csvChart<span class="emphasize-code">{{ chartId }}</span> = new Chart(ctx<span class="emphasize-code">{{ chartId }}</span>, {{ html }});
 &lt;/script&gt;</code></pre>
                         </div>
                     </div>
