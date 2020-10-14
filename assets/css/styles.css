@@ -134,3 +134,7 @@ pre {
 .remind-text-data {
   padding-bottom: 150px;
 }
+
+code {
+  word-wrap: normal;
+}
