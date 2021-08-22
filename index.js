@@ -364,7 +364,7 @@ function saveJpeg(){
   //draw background / rect on entire canvas
   context.fillRect(0,0,w,h);
   //get the image data from the canvas
-  let imageData = this.canvas.toDataURL("image/jpeg");
+  let imageData = canvas.toDataURL("image/jpeg");
   //clear the canvas
   context.clearRect (0,0,w,h);
   //restore it with original / cached ImageData

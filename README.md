@@ -16,14 +16,4 @@ Demo page: https://c-lake.github.io/csv-charts/
 
   The numbers in yellow (**1001** here) is a random number and should be unique to each chart in a single webpage. In case of collision, press **Export HTML** again and another number will be generated.
 
-
-
-#### TODO
-- [x] Select multiple series
-- [x] More chart types: scatter...
-- [x] Large file mode: Limit size of CSV preview for significantly faster large file loads
-- [x] Exportable charts to embed in HTML
-- [x] Limit data range
-- [x] Complete interface remake
-
 Automatic chart coloring from: https://nagix.github.io/chartjs-plugin-colorschemes/

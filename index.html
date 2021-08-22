@@ -174,7 +174,7 @@
                         <div v-if="rendered || largeFileMode">
                             <button v-if="largeFileMode" @click="render(true)" class="btn btn-success btn-sm mr-2"><i class="fas fa-sync"></i> Refresh Changes</button>
 
-                            <span class="zoom-buttons-bar">
+                            <span class="zoom-buttons-bar" v-if="activeChartDefinition.hasYAxis">
                                 <span class="align-middle d-inline-block mr-1">
                                     <i class="fas fa-search"></i>
                                 </span>
@@ -244,7 +244,9 @@
                             Paste this at the end of the head element, right before <code>&lt;/head&gt;</code>:<br>
                             <pre class="px-3 py-2"><code>&lt;script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"&gt;&lt;/script&gt;
 &lt;script src="https://c-lake.github.io/csv-charts/js/chartjs-plugin-colorschemes.min.js"&gt;&lt;/script&gt;
-&lt;!-- Color scheme script from https://nagix.github.io/chartjs-plugin-colorschemes by Akihiko Kusanagi --&gt;</code></pre>You only need to do this once for each webpage even if you have multiple charts.
+&lt;!-- Color scheme script from https://nagix.github.io/chartjs-plugin-colorschemes by Akihiko Kusanagi --&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"&gt;&lt;/script&gt;
+&lt;src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.7"&gt;&lt;/script&gt;</code></pre>You only need to do this once for each webpage even if you have multiple charts.
                         </div>
                         <br>
                         <div>
