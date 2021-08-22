@@ -20,7 +20,7 @@
     <!-- Bootstrap scripts -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 
@@ -29,7 +29,7 @@
         <div class="row fixed-top">
             <div class="col-md-12 csv-header">
                 <div class="navbar navbar-dark bg-dark csv-nav">
-                    <div class="container-fluid"><a class="navbar-brand" href="#">CSV Charts</a><span class="csv-filename"><i class="fa fa-file-text file-icon"></i>
+                    <div class="container-fluid"><a class="navbar-brand" href="#">CSV Charts</a><span class="csv-filename"><i class="fas fa-file-csv file-icon"></i>
                         <span v-if="completed">{{ fileName }}</span>
                         <span v-else>Choose a CSV file</span>
                     </span></div>
@@ -56,14 +56,14 @@
                                     <div class="remind-text mb-1">File Options</div>
                                     <label for="largeFileMode">Large File Mode </label>
                                     <span data-toggle="tooltip" data-placement="top" data-html="true" title="Limits size of CSV preview<br>Stops automatic chart update">
-                                        <i class="fa fa-question-circle" aria-hidden="true"></i>&nbsp;
+                                        <i class="fas fa-question-circle" aria-hidden="true"></i>&nbsp;
                                     </span>
                                     <input type="checkbox" id="largeFileMode" v-model="largeFileMode" @change="render()" />
                                     
                                     <br>
                                     <label for="fileReadRange">Limit range to read
                                         <span data-toggle="tooltip" data-placement="top" data-html="true" title="Examples: Empty (no limit, read whole file)<br>D100 (A1:D100)<br>AA (Load 27 columns only)<br>100 (Load 100 rows only)">
-                                            <i class="fa fa-question-circle" aria-hidden="true"></i>
+                                            <i class="fas fa-question-circle" aria-hidden="true"></i>
                                         </span>
                                     </label><br>
                                     A1:<input type="text" id="fileReadRange" v-model="fileReadRange" />
@@ -102,14 +102,14 @@
                                         <v-select multiple v-model="selected" :options="header" @input="render()" />
                                     </div>
                                     <div class="col mt-2">
-                                        <button @click="selected = Array.from(header); render()" class="btn btn-primary btn-sm">Select all</button>
-                                        <button @click="selected = []" class="btn btn-primary btn-sm">Clear selection</button>
+                                        <button @click="selected = Array.from(header); render()" class="btn btn-light-alt btn-sm">Select all</button>
+                                        <button @click="selected = []" class="btn btn-light-alt btn-sm">Clear selection</button>
                                     </div>
                                 </div>
                                 
                                 <div><br>
                                     Switch row / column:
-                                    <button @click="transpose()" class="btn btn-primary btn-sm" id="Transpose">Transpose</button>
+                                    <button @click="transpose()" class="btn btn-light-alt btn-sm" id="Transpose">Transpose</button>
                                 </div>
                             </div>
                         </div>
@@ -146,13 +146,13 @@
                                     <label for="stack">Stack series</label>
                                 </div>
 
-                                <div>
+                                <div v-if="activeChartDefinition.hasYAxis">
                                     <input type="checkbox" id="yAxisLabel" v-model="chartOption_yAxisLabel" @change="render()">
                                     <label for="yAxisLabel">Display vertical axis label: </label>
                                     <input type="text" v-model="chartOption_yAxisLabelText" @blur="render()" />
                                 </div>
 
-                                <div>
+                                <div v-if="activeChartDefinition.hasYAxis">
                                     <input type="checkbox" id="xAxisLabel" v-model="chartOption_xAxisLabel" @change="render()">
                                     <label for="xAxisLabel">Display horizontal axis label: </label>
                                     <input type="text" v-model="chartOption_xAxisLabelText" @blur="render()" />
@@ -166,16 +166,23 @@
                 <div class="card preview-area">
                     <div class="card-body">
                         <h4 class="card-title">Chart Preview</h4>
-                        <div v-if="rendered">
-                            <button v-if="largeFileMode" @click="render(true)" class="btn btn-success btn-sm">Update Chart</button>
-                            <button type="button" class="btn btn-primary btn-sm mb-1" data-toggle="modal" data-target="#exportModal" @click="render(true, true)">Export HTML</button>
-                            <a onclick="saveImage()" class="btn btn-primary btn-sm mb-1">Export PNG (Transparent)</a>
-                            <a onclick="saveJpeg()" class="btn btn-primary btn-sm mb-1">Export JPEG (White Background)</a>
+                        <div v-if="rendered" class="chart-buttons-bar">
+                            <button v-if="largeFileMode" @click="render(true)" class="btn btn-success btn-sm"><i class="fas fa-sync"></i> Refresh</button>
                         </div>
                         <div v-else class="remind-text">
                             Choose a csv file and select data series.
                         </div>
                         <canvas id="csv-chart"></canvas>
+                        <div v-if="rendered">
+                            <h5 class="export-title">
+                                <i class="fas fa-file-export"></i> Export Chart
+                            </h5>
+                            <div>
+                                <button type="button" class="btn btn-primary btn-sm mb-1" data-toggle="modal" data-target="#exportModal" @click="render(true, true)">HTML</button>
+                                <a onclick="saveImage()" class="btn btn-light-alt btn-sm mb-1">PNG (Transparent)</a>
+                                <a onclick="saveJpeg()" class="btn btn-light-alt btn-sm mb-1">JPEG (White Background)</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="card preview-area">

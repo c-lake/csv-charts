@@ -78,6 +78,16 @@
   }
 }
 
+h5.export-title {
+  margin: 10px 0px 10px 0px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.chart-buttons-bar {
+  float: right;
+}
+
 .card-header.clickable {
   cursor: pointer;
   border-radius: 0;
@@ -88,9 +98,21 @@
   padding-right: 0;
 }
 
-.fa.file-icon {
+.fas.file-icon {
   margin-right: 10px;
   margin-left: 20px;
+}
+
+.btn-light-alt {
+  color: #0080ff;
+  background-color: #f0f0f0;
+  border-color: #f0f0f0;
+}
+
+.btn-light-alt:hover, .btn-light-alt:focus, .btn-light-alt:active, .btn-light-alt.active, .btn-light-alt:active:focus {
+  color: #005dba !important;
+  background-color: #eee !important;
+  border-color: #eee !important;
 }
 
 .card-header.clickable:hover {
