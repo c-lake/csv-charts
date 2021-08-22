@@ -246,7 +246,7 @@
 &lt;script src="https://c-lake.github.io/csv-charts/js/chartjs-plugin-colorschemes.min.js"&gt;&lt;/script&gt;
 &lt;!-- Color scheme script from https://nagix.github.io/chartjs-plugin-colorschemes by Akihiko Kusanagi --&gt;
 &lt;script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"&gt;&lt;/script&gt;
-&lt;src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.7"&gt;&lt;/script&gt;</code></pre>You only need to do this once for each webpage even if you have multiple charts.
+&lt;script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.7"&gt;&lt;/script&gt;</code></pre>You only need to do this once for each webpage even if you have multiple charts.
                         </div>
                         <br>
                         <div>
@@ -257,6 +257,10 @@
     let ctx<span class="emphasize-code">{{ chartId }}</span> = document.getElementById('csv-chart-<span class="emphasize-code">{{ chartId }}</span>').getContext('2d');
     let csvChart<span class="emphasize-code">{{ chartId }}</span> = new Chart(ctx<span class="emphasize-code">{{ chartId }}</span>, {{ html }});
 &lt;/script&gt;</code></pre>
+                            
+                            <div v-if="zoomX || zoomY" class="alert alert-warning mt-2" role="alert">
+                                <i class="fas fa-search mr-2"></i> Your zoom preferences are preserved with the exported chart.
+                            </div>
                         </div>
                     </div>
                 
