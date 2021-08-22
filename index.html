@@ -259,7 +259,7 @@
 &lt;/script&gt;</code></pre>
                             
                             <div v-if="zoomX || zoomY" class="alert alert-warning mt-2" role="alert">
-                                <i class="fas fa-search mr-2"></i> Your zoom preferences are preserved with the exported chart.
+                                <i class="fas fa-search mr-2"></i> The exported chart will also have <span v-if="zoomX"> horizontal </span><span v-if="zoomX && zoomY"> and </span><span v-if="zoomY"> vertical </span>zoom enabled.
                             </div>
                         </div>
                     </div>
