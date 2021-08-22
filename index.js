@@ -1,3 +1,4 @@
+"use strict";
 Vue.component('v-select', VueSelect.VueSelect);
 
 const ChartDefinition = [
@@ -69,6 +70,10 @@ var app = new Vue({
       chartOption_yAxisLabelText: '', // valid for chart with hasYAxis. Specifies the y-axis label text
       chartOption_xAxisLabel: false, // valid for chart with hasYAxis. Specifies whether x-axis label should be displayed
       chartOption_xAxisLabelText: '', // valid for chart with hasYAxis. Specifies the x-axis label text
+
+      // Zoom options
+      zoomX: false,
+      zoomY: false,
     }
   },
   methods: {
@@ -117,6 +122,8 @@ var app = new Vue({
      * @param {Boolean} refreshHtml Whether or not to refresh the exportable HTML. Defaults to false.
      */
     render(force = false, refreshHtml = false) {
+      this.registerTooltips();
+
       if (!this.completed) return; // Do nothing if file not loaded
       if (this.largeFileMode && !force) return;
 
@@ -176,6 +183,16 @@ var app = new Vue({
         plugins: {
           colorschemes: {
             scheme: 'tableau.Classic20'
+          },
+          zoom: {
+            pan: {
+              enabled: (this.activeChartDefinition.hasYAxis && (this.zoomX || this.zoomY)),
+              mode: '' + (this.zoomX ? 'x' : '') + (this.zoomY ? 'y' : '')
+            },
+            zoom: {
+              enabled: (this.activeChartDefinition.hasYAxis && (this.zoomX || this.zoomY)),
+              mode: '' + (this.zoomX ? 'x' : '') + (this.zoomY ? 'y' : '')
+            }
           }
         }
       }
@@ -195,7 +212,7 @@ var app = new Vue({
     transform() {
       let xaxis = [];
       const xaxisIndex = 0;
-      for (row of this.raw) {
+      for (let row of this.raw) {
         xaxis.push(row[xaxisIndex]);
       }
       xaxis.shift();
@@ -257,7 +274,7 @@ var app = new Vue({
      * Should be false during initialization of page when data series are not yet ready.
      */
     updateChartType(doRender = true) {
-      chartType = this.chartType;
+      let chartType = this.chartType;
       this.activeChartDefinition = this.chartDefinition.find( chart => chart.title === chartType);
       console.log(this.activeChartDefinition.title);
       
@@ -302,12 +319,18 @@ var app = new Vue({
       for (let i = 0, j = col.length - 1; i < col.length; i++, j--) {
         numCols += (col.charCodeAt(j) - 64) * (26 ** i);
       }
-      numRows = parseInt(cellAddress.replace(/\D/g,''));
+      let numRows = parseInt(cellAddress.replace(/\D/g,''));
       return {
         col, // The parsed column in alphabets for display
         numCols: numCols > 0 ? numCols : 0,
         numRows: numRows > 0 ? numRows : 0
       }
+    },
+
+    registerTooltips() {
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
     }
 
   },
@@ -325,7 +348,7 @@ function saveImage() {
 function saveJpeg(){
   // Blatantly copied from https://stackoverflow.com/a/44174406. Written by Laereom
   let context = document.getElementById('csv-chart').getContext('2d');
-  canvas = context.canvas;
+  let canvas = context.canvas;
   //cache height and width        
   let w = canvas.width;
   let h = canvas.height;

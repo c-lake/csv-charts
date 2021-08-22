@@ -9,6 +9,8 @@
     <!-- Chart.js scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script src="js/chartjs-plugin-colorschemes.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.7"></script>
 
     <!-- Papaparse & Vue scripts -->
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.2.0/papaparse.js"></script>
@@ -54,12 +56,15 @@
                                     <hr>
 
                                     <div class="remind-text mb-1">File Options</div>
-                                    <label for="largeFileMode">Large File Mode </label>
-                                    <span data-toggle="tooltip" data-placement="top" data-html="true" title="Limits size of CSV preview<br>Stops automatic chart update">
-                                        <i class="fas fa-question-circle" aria-hidden="true"></i>&nbsp;
-                                    </span>
-                                    <input type="checkbox" id="largeFileMode" v-model="largeFileMode" @change="render()" />
-                                    
+
+                                    <div class="custom-control custom-switch">
+                                        <input class="custom-control-input" type="checkbox" id="largeFileMode" v-model="largeFileMode" @change="render()" />
+                                        <label class="custom-control-label" for="largeFileMode">Large File Mode </label>
+                                        <span data-toggle="tooltip" data-placement="top" data-html="true" title="Limits size of CSV preview<br>Stops automatic chart update">
+                                            <i class="fas fa-question-circle" aria-hidden="true"></i>&nbsp;
+                                        </span>
+                                    </div>
+
                                     <br>
                                     <label for="fileReadRange">Limit range to read
                                         <span data-toggle="tooltip" data-placement="top" data-html="true" title="Examples: Empty (no limit, read whole file)<br>D100 (A1:D100)<br>AA (Load 27 columns only)<br>100 (Load 100 rows only)">
@@ -166,8 +171,25 @@
                 <div class="card preview-area">
                     <div class="card-body">
                         <h4 class="card-title">Chart Preview</h4>
-                        <div v-if="rendered" class="chart-buttons-bar">
-                            <button v-if="largeFileMode" @click="render(true)" class="btn btn-success btn-sm"><i class="fas fa-sync"></i> Refresh</button>
+                        <div v-if="rendered || largeFileMode">
+                            <button v-if="largeFileMode" @click="render(true)" class="btn btn-success btn-sm mr-2"><i class="fas fa-sync"></i> Refresh Changes</button>
+
+                            <span class="zoom-buttons-bar">
+                                <span class="align-middle d-inline-block mr-1">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <span class="custom-control custom-switch align-middle d-inline-block mr-1">
+                                    <input class="custom-control-input" type="checkbox" id="zoomX" v-model="zoomX" @change="render()" />
+                                    <label class="custom-control-label" for="zoomX">Horizontal Zoom </label>
+                                </span>
+                                <span class="custom-control custom-switch align-middle d-inline-block mr-1">
+                                    <input class="custom-control-input" type="checkbox" id="zoomY" v-model="zoomY" @change="render()" />
+                                    <label class="custom-control-label" for="zoomY">Vertical Zoom </label>
+                                </span>
+                                <span data-toggle="tooltip" data-placement="top" data-html="true" title="Pinch or scroll to zoom<br>Drag to pan<br>Toggling resets zoom">
+                                    <i class="fas fa-question-circle" aria-hidden="true"></i>&nbsp;
+                                </span>
+                            </span>
                         </div>
                         <div v-else class="remind-text">
                             Choose a csv file and select data series.
